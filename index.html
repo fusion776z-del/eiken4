@@ -125,7 +125,7 @@ footer{
 }
 .rounds{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:8px;
   margin:15px 0;
 }
@@ -163,6 +163,14 @@ footer{
       <button class="roundBtn" data-round="2">第3回</button>
       <button class="roundBtn" data-round="3">第4回</button>
       <button class="roundBtn" data-round="4">第5回</button>
+<button
+class="roundBtn"
+id="randomMode">
+総合ランダム
+</button>
+
+
+
     </div>
 
     <button id="go" class="primary">
@@ -176,7 +184,7 @@ footer{
 <header>
 <div class="wrap row">
   <b id="where">第1回 1/33</b>
-  <b id="time">80:00</b>
+  
 </div>
 </header>
 
@@ -2042,6 +2050,7 @@ let i = 0;
 let ans = {};
 let ROUND = 0;
 
+let RANDOM_MODE = false;
 const $ = x => document.querySelector(x);
 document
  .querySelectorAll(".roundBtn")
@@ -2063,6 +2072,20 @@ document
    };
 
  });
+$("#randomMode").onclick = ()=>{
+
+  RANDOM_MODE = true;
+
+  document
+   .querySelectorAll(".roundBtn")
+   .forEach(b=>{
+     b.classList.remove("active");
+   });
+
+  $("#randomMode")
+    .classList.add("active");
+
+};
 function shuffle(arr){
 
   for(let i = arr.length - 1; i > 0; i--){
@@ -2082,10 +2105,53 @@ function shuffle(arr){
 function load(){
 
  
-Q = JSON.parse(
-  JSON.stringify(BANK[ROUND] || [])
-);
+if(RANDOM_MODE){
 
+  let vocab = [];
+  let conversation = [];
+  let order = [];
+  let reading = [];
+
+  BANK.flat().forEach(q=>{
+
+    if(q.s==="語句補充"){
+      vocab.push(q);
+    }
+
+    else if(q.s==="会話文"){
+      conversation.push(q);
+    }
+
+    else if(q.s==="語順整序"){
+      order.push(q);
+    }
+
+    else if(q.s==="長文読解"){
+      reading.push(q);
+    }
+
+  });
+
+  shuffle(vocab);
+  shuffle(conversation);
+  shuffle(order);
+  shuffle(reading);
+
+  Q = [
+    ...vocab.slice(0,15),
+    ...conversation.slice(0,5),
+    ...order.slice(0,5),
+    ...reading.slice(0,8)
+  ];
+
+}
+else{
+
+  Q = JSON.parse(
+    JSON.stringify(BANK[ROUND] || [])
+  );
+
+}
   Q.forEach(q=>{
 
     let items = q.c.map(
@@ -2113,8 +2179,10 @@ function render(){
 
   let q = Q[i];
 
-  $("#where").textContent =
-    `第${ROUND+1}回 ${i+1}/33`;
+ $("#where").textContent =
+ RANDOM_MODE
+ ? `総合ランダム ${i+1}/33`
+ : `第${ROUND+1}回 ${i+1}/33`;
 
   $("#no").textContent =
     `QUESTION ${i+1}`;
@@ -2245,7 +2313,9 @@ function finish(){
 
   // スコア表示
   $("#score").textContent =
-    `第${ROUND+1}回 ${score}/33`;
+ RANDOM_MODE
+ ? `総合ランダム ${score}/33`
+ : `第${ROUND+1}回 ${score}/33`;
 
   // 復習一覧生成
   $("#reviews").innerHTML =
