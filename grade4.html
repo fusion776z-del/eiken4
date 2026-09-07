@@ -125,7 +125,7 @@ footer{
 }
 .rounds{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:8px;
   margin:15px 0;
 }
@@ -163,6 +163,7 @@ footer{
       <button class="roundBtn" data-round="2">第3回</button>
       <button class="roundBtn" data-round="3">第4回</button>
       <button class="roundBtn" data-round="4">第5回</button>
+      <button class="roundBtn" id="randomBtn">総合ランダム</button>
     </div>
 
     <button id="go" class="primary">
@@ -176,7 +177,7 @@ footer{
 <header>
 <div class="wrap row">
   <b id="where">第1回 1/33</b>
-  <b id="time">80:00</b>
+ 
 </div>
 </header>
 
@@ -2041,6 +2042,7 @@ let Q = [];
 let i = 0;
 let ans = {};
 let ROUND = 0;
+let RANDOM_MODE = false;
 
 const $ = x => document.querySelector(x);
 document
@@ -2063,6 +2065,19 @@ document
    };
 
  });
+$("#randomBtn").onclick = () => {
+
+  RANDOM_MODE = true;
+
+  document
+   .querySelectorAll(".roundBtn")
+   .forEach(b=>{
+      b.classList.remove("active");
+   });
+
+  $("#randomBtn").classList.add("active");
+
+};
 function shuffle(arr){
 
   for(let i = arr.length - 1; i > 0; i--){
@@ -2081,40 +2096,40 @@ function shuffle(arr){
 
 function load(){
 
- 
-Q = JSON.parse(
-  JSON.stringify(BANK[ROUND] || [])
-);
+if(RANDOM_MODE){
 
-  Q.forEach(q=>{
+   let all = [];
 
-    let items = q.c.map(
-      (text,n)=>({
-        text:text,
-        ok:n===q.a
-      })
-    );
+   BANK.forEach(set=>{
+      all.push(...set);
+   });
 
-    shuffle(items);
+   shuffle(all);
 
-    q.c = items.map(
-      v=>v.text
-    );
+   Q = JSON.parse(
+      JSON.stringify(
+         all.slice(0,33)
+      )
+   );
 
-    q.a = items.findIndex(
-      v=>v.ok
-    );
+}else{
 
-  });
+   Q = JSON.parse(
+      JSON.stringify(
+         BANK[ROUND] || []
+      )
+   );
 
 }
-
+}
 function render(){
 
   let q = Q[i];
 
   $("#where").textContent =
-    `第${ROUND+1}回 ${i+1}/33`;
+RANDOM_MODE
+ ? `総合ランダム ${i+1}/33`
+ : `第${ROUND+1}回 ${i+1}/33`;
 
   $("#no").textContent =
     `QUESTION ${i+1}`;
@@ -2245,7 +2260,9 @@ function finish(){
 
   // スコア表示
   $("#score").textContent =
-    `第${ROUND+1}回 ${score}/33`;
+RANDOM_MODE
+ ? `総合ランダム ${score}/33`
+ : `第${ROUND+1}回 ${score}/33`;
 
   // 復習一覧生成
   $("#reviews").innerHTML =
