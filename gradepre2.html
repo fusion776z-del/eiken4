@@ -1961,31 +1961,30 @@ $("#go").onclick = ()=>{
 };
 
 $("#prev").onclick = ()=>{
-
   if(i>0){
-
     i--;
-
     render();
 
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
   }
-
 };
 
 $("#next").onclick = ()=>{
-
   if(i < Q.length - 1){
-
     i++;
-
     render();
 
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+
   }else{
-
     finish();
-
   }
-
 };
 $("#home").onclick = ()=>{
 
