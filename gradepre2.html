@@ -1647,49 +1647,51 @@ function load(){
 if(RANDOM_MODE){
 
   let vocab = [];
-  let conversation = [];
-  let order = [];
   let reading = [];
   let email = [];
+  let essay = [];
 
   BANK.flat().forEach(q=>{
 
-    if(q.s==="語句補充"){
-      vocab.push(q);
-    }
-    else if(q.s==="会話文"){
-      conversation.push(q);
-    }
-    else if(q.s==="語順整序"){
-      order.push(q);
-    }
-    else if(q.s==="長文読解"){
+    if(q.s === "長文読解"){
       reading.push(q);
     }
-    else if(q.s==="Eメール読解"){
+    else if(q.s === "Eメール"){
       email.push(q);
+    }
+    else if(q.s === "英作文"){
+      essay.push(q);
+    }
+    else{
+      vocab.push(q);
     }
 
   });
 
   shuffle(vocab);
-  shuffle(conversation);
-  shuffle(order);
   shuffle(reading);
   shuffle(email);
+  shuffle(essay);
 
   Q = [
-    ...vocab.slice(0,15),
-    ...conversation.slice(0,5),
-    ...order.slice(0,5),
-    ...reading.slice(0,10),
-    ...email.slice(0,5)
+
+    ...vocab.slice(0,20),
+
+    ...reading.slice(0,4),
+
+    email[0],
+
+    essay[0]
+
   ];
+
 }
 else{
 
   Q = JSON.parse(
-    JSON.stringify(BANK[ROUND] || [])
+    JSON.stringify(
+      BANK[ROUND] || []
+    )
   );
 
 }
