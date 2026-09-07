@@ -2219,7 +2219,6 @@ function showExplanation(){
 
   $("#fb").innerHTML = `
     <div class="feedback">
-
       <b>
       ${correct ? "○ 正解" : "× 不正解"}
       </b>
@@ -2242,8 +2241,12 @@ function showExplanation(){
     </div>
   `;
 
-}
+  $("#fb").scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
 
+}
 
 function finish(){
 

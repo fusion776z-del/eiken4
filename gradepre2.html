@@ -1820,23 +1820,18 @@ function showExplanation(){
 
   let q = Q[i];
 
-  let answerText =
-    q.c
-    ? q.c[q.a]
-    : q.sample;
-
   let correct =
-    ans[i]===q.a;
+    ans[i] === q.a;
+
   $("#fb").innerHTML = `
     <div class="feedback">
-
       <b>
       ${correct ? "○ 正解" : "× 不正解"}
       </b>
 
       <p>
       正答：
-      ${answerText}
+      ${q.c[q.a]}
       </p>
 
       <p>
@@ -1852,8 +1847,12 @@ function showExplanation(){
     </div>
   `;
 
-}
+  $("#fb").scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
 
+}
 
 function finish(){
 
